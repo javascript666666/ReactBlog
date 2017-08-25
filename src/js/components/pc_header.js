@@ -133,7 +133,7 @@ class PCHeader extends React.Component{
 					<Button type="ghost" htmlType="button">退出</Button>
 				</Menu.Item>
 			: <Menu.Item key="register" class="register">
-				<Icon type="appstore"/>注册/登录
+				<Icon type="user"/>注册/登录
 			</Menu.Item>;
 
 		return(
@@ -147,24 +147,24 @@ class PCHeader extends React.Component{
 						</a>
 					</Col>
 					<Col span={15}>
-						<Menu class="ant-menu ant-menu-horizontal ant-menu-light ant-menu-root" role="menu" aria-activedescendant="" id="nav" tabindex="0"  selectedKeys={[this.state.current]} >
+						<Menu class="ant-menu ant-menu-horizontal ant-menu-light ant-menu-root" onClick={this.handleClick.bind(this)} role="menu" aria-activedescendant="" id="nav" tabindex="0"  selectedKeys={[this.state.current]} >
 							<Menu.Item key="home">
-								<Icon type="appstore" /> 首页
+								<Icon type="home" /> 首页
 							</Menu.Item>
 							<Menu.Item key="blog">
-								<Icon type="appstore" /> 博客
+								<Icon type="edit" /> 博客
 							</Menu.Item>
 							<Menu.Item key="category">
 								<Icon type="appstore" /> 分类
 							</Menu.Item>
 							<Menu.Item key="essay">
-								<Icon type="appstore" /> 随笔
+								<Icon type="smile-o" /> 随笔
 							</Menu.Item>
 							<Menu.Item key="reprint">
-								<Icon type="appstore" /> 转载
+								<Icon type="eye" /> 转载
 							</Menu.Item>
 							<Menu.Item  key="myprofile">
-								<Icon type="appstore" /> 我的资料
+								<Icon type="idcard" /> 我的资料
 							</Menu.Item>
 							{userShow}
 						</Menu>

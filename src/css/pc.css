@@ -34,7 +34,7 @@
 }
 
 .logo span {
-	    float: right;
+	   float: right;
     font-family: Raleway,Hiragino Sans GB,sans-serif;
     height: 80px;
     line-height: 80px;
@@ -55,6 +55,7 @@
     min-width: 72px;
     text-align: center;
     border-bottom-width: 3px;
+    font-size: 16px;
 }
 .ant-menu-item{
     color: #fff;
