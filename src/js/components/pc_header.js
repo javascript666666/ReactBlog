@@ -1,17 +1,141 @@
 import React from 'react';
-import { Row, Col } from 'antd';
-import { Menu, Icon } from 'antd';
+import {Modal, Menu, Tabs, Form, message, Input, Tooltip, Icon, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete } from 'antd';
+const FormItem = Form.Item;
+const Option = Select.Option;
+const AutoCompleteOption = AutoComplete.Option;
+
 const SubMenu = Menu.SubMenu;
+const TabPane = Tabs.TabPane;
 const MenuItemGroup = Menu.ItemGroup;
-export default class PCHeader extends React.Component{
+
+import {Router, Route, Link, browserHistory} from 'react-router'
+
+class PCHeader extends React.Component{
 	constructor(){
 		super();
 		this.state = {
-						current: "home"
-					};
-	}
+				current: "home",
+				modalVisible: false,
+				action: 'login',
+				hasLogined: false,
+				userNickName: '',
+				userid: 0,
+				confirmDirty: false,
+	    	autoCompleteResult: [],
+			};
+		};
+
+	setModalVisible(value)
+	{
+		console.log(111);
+		this.setState({modalVisible: value});
+	};
+	handleClick(e) {
+		if (e.key = "register") {
+			this.setState({current: 'register'});
+			this.setModalVisible(true);
+		} else {
+			{
+				this.setState({current: e.key});
+			}
+		}
+	};
+	handleSubmit(e)
+	{
+		//页面开始向 API 进行提交数据
+		e.preventDefault();
+		var myFetchOptions = {
+			method: 'GET'
+		}
+		this.props.form.validateFieldsAndScroll((err, formData) => {
+      if (!err) {
+				return console.log('Received values of form: ', formData);
+      }
+      console.log(formData)
+			fetch("http://newsapi.gugujiankong.com/Handler.ashx?action=" + this.state.action
+			+ "&username="+formData.userName+"&password="+formData.password
+			+"&r_userName=" + formData.r_userName + "&r_password="
+			+ formData.r_password + "&r_confirmPassword="
+			+ formData.r_confirmPassword, myFetchOptions)
+			.then(response => response.json())
+			.then(json => {
+				this.setState({userNickName: json.NickUserName, userid: json.UserId});
+			});
+			if (this.state.action=="login") {
+				console.log(555)
+				this.setState({hasLogined:true});
+			}
+			console.log(666)
+			message.success("请求成功！");
+			this.setModalVisible(false);
+	    });
+	};
+
+
+
+
+  handleConfirmBlur (e){
+    const value = e.target.value;
+    this.setState({ confirmDirty: this.state.confirmDirty || !!value });
+  }
+  checkPassword(rule, value, callback){
+    const form = this.props.form;
+    if (value && value !== form.getFieldValue('r_password')) {
+      callback('二次输入密码不一致,请重新输入');
+    } else {
+      callback();
+    }
+  }
+  checkConfirm(rule, value, callback){
+    const form = this.props.form;
+    if (value && this.state.confirmDirty) {
+      form.validateFields(['r_confirmPassword'], { force: true });
+    }
+    callback();
+  }
+
 
 	render(){
+		const { getFieldDecorator } = this.props.form;
+    const { autoCompleteResult } = this.state;
+
+    const formItemLayout = {
+      labelCol: {
+        xs: { span: 24 },
+        sm: { span: 6 },
+      },
+      wrapperCol: {
+        xs: { span: 24 },
+        sm: { span: 14 },
+      },
+    };
+    const tailFormItemLayout = {
+      wrapperCol: {
+        xs: {
+          span: 24,
+          offset: 0,
+        },
+        sm: {
+          span: 14,
+          offset: 6,
+        },
+      },
+    };
+   
+		const userShow = this.state.hasLogined
+			? <Menu.Item key="logout" class="register">
+					<Button type="primary" htmlType="button">{this.state.userNickName}</Button>
+					&nbsp;&nbsp;
+					<Link target="_blank">
+						<Button type="dashed" htmlType="button">个人中心</Button>
+					</Link>
+					&nbsp;&nbsp;
+					<Button type="ghost" htmlType="button">退出</Button>
+				</Menu.Item>
+			: <Menu.Item key="register" class="register">
+				<Icon type="appstore"/>注册/登录
+			</Menu.Item>;
+
 		return(
 			<header id="header">
 				<Row>
@@ -42,7 +166,86 @@ export default class PCHeader extends React.Component{
 							<Menu.Item  key="myprofile">
 								<Icon type="appstore" /> 我的资料
 							</Menu.Item>
+							{userShow}
 						</Menu>
+						<Modal title="用户中心" wrapClassName="vertical-center-modal" visible={this.state.modalVisible} onCancel= {()=>this.setModalVisible(false)} onOk={() => this.setModalVisible(false)} okText = "关闭">
+							<Tabs type="card">
+								<TabPane tab="注册" key="2">
+									<Form onSubmit={this.handleSubmit.bind(this)}>
+
+										<FormItem
+						          {...formItemLayout}
+						          label={(
+						            <span>
+						              用户名&nbsp;
+						              <Tooltip title="请给您起个响亮的账户名称吧!">
+						                <Icon type="question-circle-o" />
+						              </Tooltip>
+						            </span>
+						          )}
+						          hasFeedback
+						        >
+						          {getFieldDecorator('r_userName', {
+						            rules: [{ required: true, message: '请输入您的账号名称!', whitespace: true }],
+						          })(
+						            <Input />
+						          )}
+						        </FormItem>
+
+						        <FormItem
+						          {...formItemLayout}
+						          label="邮箱"
+						          hasFeedback
+						        >
+						          {getFieldDecorator('r_userEmail', {
+						            rules: [{
+						              type: 'email', message: '邮箱格式不对!',
+						            }, {
+						              required: true, message: '请输入您的邮箱',
+						            }],
+						          })(
+						            <Input  placeholder="123@qq.com"/>
+						          )}
+						        </FormItem>
+						         <FormItem
+						          {...formItemLayout}
+						          label="密码"
+						          hasFeedback
+						        >
+						          {getFieldDecorator('r_password', {
+						            rules: [{
+						              required: true, message: '请输入您的密码!',
+						            }, {
+						              validator: this.checkConfirm.bind(this),
+						            }],
+						          })(
+						            <Input type="password" />
+						          )}
+						        </FormItem>
+						        <FormItem
+						          {...formItemLayout}
+						          label="确认密码"
+						          hasFeedback
+						        >
+						          {getFieldDecorator('r_confirmPassword', {
+						            rules: [{
+						              required: true, message: '请确认您的密码!',
+						            }, {
+						              validator: this.checkPassword.bind(this),
+						            }],
+						          })(
+						            <Input type="password" onBlur={this.handleConfirmBlur.bind(this)} />
+						          )}
+						        </FormItem>
+						        
+						        <FormItem {...tailFormItemLayout}>
+						          <Button type="primary" htmlType="submit">提交注册</Button>
+						        </FormItem>
+						        
+						      </Form>
+						    </TabPane>
+							</Tabs>
+						</Modal>
 					</Col>
 					<Col span={2}></Col>
 				</Row>
@@ -50,3 +253,5 @@ export default class PCHeader extends React.Component{
 		)
 	}
 }
+
+export default PCHeader = Form.create({})(PCHeader);

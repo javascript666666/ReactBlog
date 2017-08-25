@@ -17,7 +17,6 @@ export default class Root extends React.Component{
 					<MediaQuery query='(max-device-width: 1224px)'>
 						<MobileIndex />
 					</MediaQuery>
-
 				</div>
 			);
 	}
