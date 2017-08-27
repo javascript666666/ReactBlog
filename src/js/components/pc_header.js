@@ -31,7 +31,7 @@ class PCHeader extends React.Component{
 		this.setState({modalVisible: value});
 	};
 	handleClick(e) {
-		if (e.key = "register") {
+		if (e.key === "register") {
 			this.setState({current: 'register'});
 			this.setModalVisible(true);
 		} else {
@@ -50,6 +50,9 @@ class PCHeader extends React.Component{
 		this.props.form.validateFieldsAndScroll((err, formData) => {
       if (!err) {
 				return console.log('Received values of form: ', formData);
+      }
+      if(formData.r_userName == null ||formData.r_password == null || r_confirmPassword == null ){
+      	return console.log("内容不能为空!");
       }
       console.log(formData)
 			fetch("http://newsapi.gugujiankong.com/Handler.ashx?action=" + this.state.action
