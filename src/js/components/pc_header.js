@@ -51,7 +51,7 @@ class PCHeader extends React.Component{
       if (!err) {
 				return console.log('Received values of form: ', formData);
       }
-      if(formData.r_userName == null ||formData.r_password == null || r_confirmPassword == null ){
+      if(formData.r_userName == null ||formData.r_password == null ){
       	return console.log("内容不能为空!");
       }
       console.log(formData)
@@ -74,6 +74,18 @@ class PCHeader extends React.Component{
 	    });
 	};
 
+	callback(key) {
+		if (key == 1) {
+			this.setState({action: 'login'});
+		} else if (key == 2) {
+			this.setState({action: 'register'});
+		}
+	};
+	logout(){
+		localStorage.userid= '';
+		localStorage.userNickName = '';
+		this.setState({hasLogined:false});
+	};
 
 
 
@@ -133,7 +145,7 @@ class PCHeader extends React.Component{
 						<Button type="dashed" htmlType="button">个人中心</Button>
 					</Link>
 					&nbsp;&nbsp;
-					<Button type="ghost" htmlType="button">退出</Button>
+					<Button type="ghost" htmlType="button" onClick={this.logout.bind(this)}>退出</Button>
 				</Menu.Item>
 			: <Menu.Item key="register" class="register">
 				<Icon type="user"/>注册/登录
@@ -172,7 +184,46 @@ class PCHeader extends React.Component{
 							{userShow}
 						</Menu>
 						<Modal title="用户中心" wrapClassName="vertical-center-modal" visible={this.state.modalVisible} onCancel= {()=>this.setModalVisible(false)} onOk={() => this.setModalVisible(false)} okText = "关闭">
-							<Tabs type="card">
+							<Tabs onChange={this.callback.bind(this)}>
+								<TabPane tab="登录" key="1">
+									<Form onSubmit={this.handleSubmit.bind(this)}>
+										<FormItem
+						          {...formItemLayout}
+						          label={(
+						            <span>
+						              账户&nbsp;
+						              <Tooltip title="请输入您的账号">			
+						              </Tooltip>
+						            </span>
+						          )}
+						          hasFeedback
+						        >
+						          {getFieldDecorator('r_userName', {
+						            rules: [{ required: true, message: '请输入您的账号', whitespace: true }],
+						          })(
+						            <Input />
+						          )}
+						        </FormItem>
+						        <FormItem
+						          {...formItemLayout}
+						          label="密码"
+						          hasFeedback
+						        >
+						          {getFieldDecorator('r_password', {
+						            rules: [{
+						              required: true, message: '请输入您的密码!',
+						            }, {
+						              validator: this.checkConfirm.bind(this),
+						            }],
+						          })(
+						            <Input type="password" />
+						          )}
+						        </FormItem>
+						        <Button type="primary" htmlType="submit">登录</Button>
+									</Form>
+								</TabPane>
+
+
 								<TabPane tab="注册" key="2">
 									<Form onSubmit={this.handleSubmit.bind(this)}>
 

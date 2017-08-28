@@ -64,6 +64,20 @@
     color: #2db7f5;
 }
 
+.register{
+  float: right !important;
+}
+
+.ant-menu-horizontal > .ant-menu-item > a, .ant-menu-horizontal > .ant-menu-submenu > a
+{
+  display: inline-block !important;
+}
+
+.ant-form.ant-form-horizontal {
+    text-align: center;
+}
+
+
 // ===========================================================================
 .page {
     min-height: 700px;

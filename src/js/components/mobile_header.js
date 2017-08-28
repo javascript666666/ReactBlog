@@ -73,6 +73,18 @@ class  RegistrationForm extends React.Component{
 	};
 
 
+	login(){
+		this.setModalVisible(true);
+	};
+
+	callback(key) {
+		if (key == 1) {
+			this.setState({action: 'login'});
+		} else if (key == 2) {
+			this.setState({action: 'register'});
+		}
+	};
+
 
 
   handleConfirmBlur (e){
@@ -94,10 +106,6 @@ class  RegistrationForm extends React.Component{
     }
     callback();
   }
-
-	login(){
-		this.setModalVisible(true);
-	};
 
 
 	render(){
@@ -173,11 +181,46 @@ class  RegistrationForm extends React.Component{
 
 				
 
-				
-
-
 				<Modal title="用户中心" wrapClassName="vertical-center-modal" visible={this.state.modalVisible} onCancel= {()=>this.setModalVisible(false)} onOk={() => this.setModalVisible(false)} okText = "关闭">
-							<Tabs type="card">
+							<Tabs onChange={this.callback.bind(this)}>
+								<TabPane tab="登录" key="1">
+									<Form onSubmit={this.handleSubmit.bind(this)}>
+										<FormItem
+						          {...formItemLayout}
+						          label={(
+						            <span>
+						              用户名&nbsp;
+						              <Tooltip title="请输入您账户">
+						                <Icon type="question-circle-o" />
+						              </Tooltip>
+						            </span>
+						          )}
+						          hasFeedback
+						        >
+						          {getFieldDecorator('r_userName', {
+						            rules: [{ required: true, message: '请输入您的账号名称!', whitespace: true }],
+						          })(
+						            <Input />
+						          )}
+						        </FormItem>
+						        <FormItem
+						          {...formItemLayout}
+						          label="密码"
+						          hasFeedback
+						        >
+						          {getFieldDecorator('r_password', {
+						            rules: [{
+						              required: true, message: '请输入您的密码!',
+						            }, {
+						              validator: this.checkConfirm.bind(this),
+						            }],
+						          })(
+						            <Input type="password" />
+						          )}
+						        </FormItem>
+						        <Button type="primary" htmlType="submit">登录</Button>
+						       </Form> 
+								</TabPane>
 								<TabPane tab="注册" key="2">
 									<Form onSubmit={this.handleSubmit.bind(this)}>
 
